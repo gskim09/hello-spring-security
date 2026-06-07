@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
@@ -14,7 +15,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
+import static org.mockito.ArgumentMatchers.any;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -53,14 +54,20 @@ class ProductControllerTest {
     @WithMockUser(roles = "USER")
     @DisplayName("인증된 사용자 - 상품 목록 조회 성공 (200)")
     void listProducts_authenticated_returns200() throws Exception {
-        given(productService.findAll()).willReturn(List.of(
-            new Product("Spring Boot 4 교재", 35000, "실습서", 50)
-        ));
+        given(productService.getProducts(any()))
+                .willReturn(new PageImpl<>(List.of(
+                        new Product(
+                                "Spring Boot 4 교재",
+                                35000,
+                                "실습서",
+                                50
+                        )
+                )));
 
         mockMvc.perform(get("/products"))
             .andExpect(status().isOk())
             .andExpect(view().name("products/list"))
-            .andExpect(model().attributeExists("products"));
+                .andExpect(model().attributeExists("productPage"));
     }
 
     @Test
