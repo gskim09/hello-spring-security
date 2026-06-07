@@ -52,5 +52,15 @@
         </div>
     </div>
 </div>
+<footer class="container mt-5 mb-3 py-3 border-top text-center text-muted">
+    <span>학번 : 2071288 | 성명 : 김규섭 | </span>
+
+    <span th:text="${' 실습 수행 : ' +
+        #temporals.format(
+            #temporals.createNow(),
+            'yyyy-MM-dd HH:mm:ss'
+        )}">
+    </span>
+</footer>
 </body>
 </html>
